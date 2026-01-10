@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: ruoyi-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: ruoyi
+      MYSQL_USER: ruoyi
+      MYSQL_PASSWORD: ruoyi123
+    volumes:
+      - ./sql/ry_20250522.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+      - ./conf/mysql/conf.d:/etc/mysql/conf.d
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --lower-case-table-names=0
+    networks:
+      - ruoyi-network
+    restart: unless-stopped
+
+  # Redis缓存服务
+  redis:
+    image: redis:6.2-alpine
+    container_name: ruoyi-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - ruoyi-network
+    restart: unless-stopped
+
+  # 后端Spring Boot应用
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ruoyi-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      # 数据库连接配置
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ruoyi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      SPRING_DATASOURCE_USERNAME: ruoyi
+      SPRING_DATASOURCE_PASSWORD: ruoyi123
+      # Redis连接配置
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    networks:
+      - ruoyi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # 前端Nginx服务
+  frontend:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    container_name: ruoyi-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - ruoyi-network
+    restart: unless-stopped
+    # 配置反向代理到后端
+    volumes:
+      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
+
+networks:
+  ruoyi-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:

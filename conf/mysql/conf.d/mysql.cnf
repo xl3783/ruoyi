@@ -1,0 +1,37 @@
+[mysqld]
+# 设置时区为CST（中国标准时间）
+default-time-zone = '+08:00'
+
+# 设置字符集
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+# 设置表名区分大小写（Linux下需要）
+lower_case_table_names = 0
+
+# 设置连接数
+max_connections = 200
+max_connect_errors = 600
+
+# 设置InnoDB引擎
+default-storage-engine = INNODB
+innodb_buffer_pool_size = 256M
+innodb_log_file_size = 64M
+innodb_lock_wait_timeout = 50
+
+# 设置日志
+log-error = /var/log/mysql/error.log
+slow-query-log = 1
+long_query_time = 2
+slow-query-log-file = /var/log/mysql/slow.log
+
+# 其他设置
+table_open_cache = 64
+max_allowed_packet = 500M
+sort_buffer_size = 512K
+net_buffer_length = 16K
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+myisam_sort_buffer_size = 8M
+thread_cache_size = 8
+tmp_table_size = 16M

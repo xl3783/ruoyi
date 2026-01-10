@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: ruoyi-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: ruoyi
+      MYSQL_USER: ruoyi
+      MYSQL_PASSWORD: ruoyi123
+    volumes:
+      - ./sql/ry_20250522.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --lower-case-table-names=0
+    restart: unless-stopped
+
+  # Redis缓存服务
+  redis:
+    image: redis:6.2-alpine
+    container_name: ruoyi-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # 后端Spring Boot应用
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ruoyi-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      # 数据库连接配置
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ruoyi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      SPRING_DATASOURCE_USERNAME: ruoyi
+      SPRING_DATASOURCE_PASSWORD: ruoyi123
+      # Redis连接配置
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      # 其他配置
+      SERVER_PORT: 8080
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  redis_data:
