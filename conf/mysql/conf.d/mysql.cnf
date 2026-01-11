@@ -19,11 +19,11 @@ innodb_buffer_pool_size = 256M
 innodb_log_file_size = 64M
 innodb_lock_wait_timeout = 50
 
-# 设置日志
-log-error = /var/log/mysql/error.log
-slow-query-log = 1
-long_query_time = 2
-slow-query-log-file = /var/log/mysql/slow.log
+# 设置日志 - 在Docker环境中，注释掉具体的日志文件路径，使用默认配置
+# log-error = /var/log/mysql/error.log
+# slow-query-log = 1
+# long_query_time = 2
+# slow-query-log-file = /var/log/mysql/slow.log
 
 # 其他设置
 table_open_cache = 64
