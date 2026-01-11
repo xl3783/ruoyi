@@ -1,97 +1,51 @@
-# Docker环境配置
-server:
-  port: 8080
-# 数据源配置
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     druid:
+      # 通用连接池配置
+      initialSize: 5
+      minIdle: 10
+      maxActive: 20
+      maxWait: 60000
+      connectTimeout: 30000
+      socketTimeout: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      maxEvictableIdleTimeMillis: 900000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      
       # 主库数据源
       master:
         url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/ruoyi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8}
         username: ${SPRING_DATASOURCE_USERNAME:ruoyi}
         password: ${SPRING_DATASOURCE_PASSWORD:ruoyi123}
+      
       # 从库数据源
       slave:
-        # 从数据源开关/默认关闭
         enabled: false
         url:
         username:
         password:
-      # 初始连接数
-      initialSize: 5
-      # 最小连接池数量
-      minIdle: 10
-      # 最大连接池数量
-      maxActive: 20
-      # 配置获取连接等待超时的时间
-      maxWait: 60000
-      # 配置连接超时时间
-      connectTimeout: 30000
-      # 配置网络超时时间
-      socketTimeout: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      timeBetweenEvictionRunsMillis: 60000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
-      minEvictableIdleTimeMillis: 300000
-      # 配置一个连接在池中最大生存的时间，单位是毫秒
-      maxEvictableIdleTimeMillis: 900000
-      # 配置检测连接是否有效
-      validationQuery: SELECT 1 FROM DUAL
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
+      
+      # Druid监控配置
       webStatFilter:
         enabled: true
       statViewServlet:
         enabled: true
-        # 设置白名单，不填则允许所有访问
         allow:
         url-pattern: /druid/*
-        # 控制台管理用户名和密码
         login-username: ruoyi
         login-password: 123456
       filter:
         stat:
           enabled: true
-          # 慢SQL记录
           log-slow-sql: true
           slow-sql-millis: 1000
           merge-sql: true
         wall:
           config:
             multi-statement-allow: true
-  
-  redis:
-    # Redis连接配置，使用环境变量或Docker网络名称
-    host: ${SPRING_REDIS_HOST:localhost}
-    port: ${SPRING_REDIS_PORT:6379}
-    password: ${SPRING_REDIS_PASSWORD:}
-    database: ${SPRING_REDIS_DATABASE:0}
-    timeout: 10s
-    lettuce:
-      pool:
-        max-active: 8
-        max-wait: -1ms
-        max-idle: 8
-        min-idle: 0
-
-# 文件上传路径
-ruoyi:
-  profile: /app/uploadPath
-
-# MyBatis配置
-mybatis:
-  # 搜索指定包别名
-  typeAliasesPackage: com.ruoyi.**.domain
-  # 配置mapper的扫描，找到所有的mapper.xml映射文件
-  mapperLocations: classpath*:mapper/**/*Mapper.xml
-  # 加载全局的配置文件
-  configLocation: classpath:mybatis/mybatis-config.xml
-
-# PageHelper分页插件
-pagehelper:
-  helperDialect: mysql
-  supportMethodsArguments: true
-  params: count=countSql
