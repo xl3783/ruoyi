@@ -1,5 +1,5 @@
 # 使用Node.js环境构建前端
-FROM node:16-alpine AS builder
+FROM docker.m.daocloud.io/node:16-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN npm install --registry https://registry.npm.taobao.org
 RUN npm run build:prod
 
 # 使用Nginx提供静态文件服务
-FROM nginx:alpine
+FROM docker.m.daocloud.io/nginx:alpine
 
 # 复制构建好的前端文件到nginx目录
 COPY --from=builder /app/dist /usr/share/nginx/html

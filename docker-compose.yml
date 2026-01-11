@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # MySQL数据库服务
   mysql:
-    image: mysql:8.0
+    image: docker.m.daocloud.io/mysql:8.0
     container_name: ruoyi-mysql
     ports:
       - "3306:3306"
@@ -27,7 +27,7 @@ services:
 
   # Redis缓存服务
   redis:
-    image: redis:6.2-alpine
+    image: docker.m.daocloud.io/redis:6.2-alpine
     container_name: ruoyi-redis
     ports:
       - "6379:6379"
@@ -84,7 +84,7 @@ services:
     restart: unless-stopped
     # 配置反向代理到后端
     volumes:
-      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./ruoyi-ui/nginx.conf:/etc/nginx/nginx.conf
 
 networks:
   ruoyi-network:
