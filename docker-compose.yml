@@ -24,6 +24,11 @@ services:
     networks:
       - ruoyi-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      start_period: 30s
 
   # Redis缓存服务
   redis:
@@ -38,6 +43,11 @@ services:
     networks:
       - ruoyi-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 20s
+      retries: 10
+      start_period: 20s
 
   # 后端Spring Boot应用
   backend:
@@ -48,8 +58,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy  # 等待MySQL健康检查通过
+      redis:
+        condition: service_healthy  # 等待Redis健康检查通过
     environment:
       SPRING_PROFILES_ACTIVE: docker
       # 数据库连接配置
