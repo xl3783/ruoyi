@@ -23,7 +23,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 COPY ruoyi-ui/nginx.conf /etc/nginx/nginx.conf
 
 # 暴露端口
-EXPOSE 7080
+EXPOSE 80
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \

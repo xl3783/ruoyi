@@ -76,7 +76,7 @@ services:
       dockerfile: nginx.Dockerfile
     container_name: ruoyi-frontend
     ports:
-      - "80:80"
+      - "7080:80"
     depends_on:
       - backend
     networks:
