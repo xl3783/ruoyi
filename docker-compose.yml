@@ -63,7 +63,6 @@ services:
       redis:
         condition: service_healthy  # 等待Redis健康检查通过
     environment:
-      SPRING_PROFILES_ACTIVE: docker
       # 数据库连接配置
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ruoyi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
       SPRING_DATASOURCE_USERNAME: ruoyi
