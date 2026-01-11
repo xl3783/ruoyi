@@ -69,8 +69,12 @@ services:
       SPRING_DATASOURCE_USERNAME: ruoyi
       SPRING_DATASOURCE_PASSWORD: ruoyi123
       # Redis连接配置
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # TOKEN
+      TOKEN_SECRET: gjldfjglsdfgm
+      # file path
+      FILE_UPLOAD_PATH: /home/ruoyi/uploadPath
     networks:
       - ruoyi-network
     restart: unless-stopped
