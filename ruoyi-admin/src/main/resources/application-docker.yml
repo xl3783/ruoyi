@@ -8,10 +8,17 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     druid:
-      # 数据库连接配置，使用环境变量或Docker网络名称
-      url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/ruoyi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8}
-      username: ${SPRING_DATASOURCE_USERNAME:ruoyi}
-      password: ${SPRING_DATASOURCE_PASSWORD:ruoyi123}
+      # 主库数据源
+      master:
+        url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/ruoyi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8}
+        username: ${SPRING_DATASOURCE_USERNAME:ruoyi}
+        password: ${SPRING_DATASOURCE_PASSWORD:ruoyi123}
+      # 从库数据源（默认关闭）
+      slave:
+        enabled: false
+        url: 
+        username: 
+        password: 
       # 连接池配置
       initialSize: 5
       minIdle: 10
